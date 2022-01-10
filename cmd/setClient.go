@@ -21,7 +21,10 @@ var stClientCmd = &cobra.Command{
 		}
 
 		viper.Set("ACCESS_TOKEN", args[0])
-		viper.Set("verbose", true)
 		fmt.Printf("Client ID: %v", viper.GetString("ACCESS_TOKEN"))
+		err := viper.WriteConfig()
+		if err != nil {
+			fmt.Printf("%v", err)
+		}
 	},
 }

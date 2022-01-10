@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/denizyoldas/spoty/services"
 	"github.com/spf13/cobra"
 )
 
@@ -17,5 +18,6 @@ var prev = &cobra.Command{
 }
 
 func run(cmd *cobra.Command, args []string) {
+	cobra.CheckErr(services.PrevSong())
 	fmt.Println("previus song!")
 }
