@@ -62,10 +62,37 @@ func Token(code, state string) error {
 
 	viper.Set("access_token", jsonRes["access_token"])
 	viper.Set("expires_in", jsonRes["expires_in"])
+	viper.Set("refresh_token", jsonRes["refresh_token"])
 
 	cobra.CheckErr(viper.WriteConfig())
-
 	return nil
+}
+
+func RefreshToken() {
+	data := url.Values{}
+	data.Set("grant_type", "refresh_token")
+	data.Set("refresh_token", viper.GetString("refresh_token"))
+	req, _ := http.NewRequest("POST", "https://accounts.spotify.com/api/token", strings.NewReader(data.Encode()))
+	headerVal := b64.StdEncoding.EncodeToString([]byte(viper.GetString("CLIENT_ID") + ":" + viper.GetString("SECRET")))
+	req.Header.Set("Authorization", "Basic "+headerVal)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	res, err := c.Do(req)
+	cobra.CheckErr(err)
+
+	bodyBytes, readErr := io.ReadAll(res.Body)
+	if readErr != nil {
+		log.Fatal(readErr)
+	}
+
+	var jsonRes Payload
+	cobra.CheckErr(json.Unmarshal(bodyBytes, &jsonRes))
+
+	fmt.Printf("%v", jsonRes)
+
+	viper.Set("access_token", jsonRes["access_token"])
+	viper.Set("expires_in", jsonRes["expires_in"])
+
+	cobra.CheckErr(viper.WriteConfig())
 }
 
 func Login() error {
@@ -82,7 +109,7 @@ func Login() error {
 
 	shortUrl := "https://accounts.spotify.com/authorize?" + "response_type=code&client_id=" +
 		viper.GetString("client_id") +
-		"&redirect_uri=http://localhost:3000/callback&scope=user-read-private&state=" +
+		"&redirect_uri=http://localhost:3000/callback&scope=user-read-private%20user-modify-playback-state&state=" +
 		StringCode(16)
 
 	fmt.Println("Please log in to Spotify by visiting the following page in your browser: \n", shortUrl)
@@ -111,7 +138,7 @@ func completeAuth(w http.ResponseWriter, r *http.Request) {
 
 func NextSong() error {
 	req, _ := http.NewRequest("POST", "https://api.spotify.com/v1/me/player/next", nil)
-	req.Header.Set("Authorization", "Bearer BQAYe7wsT7O_UazJV-ZWcqW5ntMbuKFGIUEZfsbxUsrc4ebcEQ0pXzlmSrS8u8xHAZLpiOHS0NozeBIBF510lQJ_lrTKJLug2QGUg7X7KWU9vgfUXXf-N439N3hXe9CzaUmwVgojcK4_SADGqvWe5dimE572Vo-ORjyV7T5Ud0lCZKHleKYW2dD1SuqTuL4MU4rkfZveH_35elB9eS2KRxplOjNxQQRtReWO-gBGZKYKPC5_z5F0-4zkJ10nGgiq6DPD")
+	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := c.Do(req)
@@ -129,7 +156,43 @@ func NextSong() error {
 
 func PrevSong() error {
 	req, _ := http.NewRequest("POST", "https://api.spotify.com/v1/me/player/previous", nil)
-	req.Header.Set("Authorization", "Bearer BQAYe7wsT7O_UazJV-ZWcqW5ntMbuKFGIUEZfsbxUsrc4ebcEQ0pXzlmSrS8u8xHAZLpiOHS0NozeBIBF510lQJ_lrTKJLug2QGUg7X7KWU9vgfUXXf-N439N3hXe9CzaUmwVgojcK4_SADGqvWe5dimE572Vo-ORjyV7T5Ud0lCZKHleKYW2dD1SuqTuL4MU4rkfZveH_35elB9eS2KRxplOjNxQQRtReWO-gBGZKYKPC5_z5F0-4zkJ10nGgiq6DPD")
+	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	res, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+
+	bodyBytes, _ := io.ReadAll(res.Body)
+	bodyStr := string(bodyBytes)
+
+	fmt.Printf("%v", bodyStr)
+
+	return nil
+}
+
+func Pause() error {
+	req, _ := http.NewRequest("PUT", "https://api.spotify.com/v1/me/player/pause", nil)
+	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	res, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+
+	bodyBytes, _ := io.ReadAll(res.Body)
+	bodyStr := string(bodyBytes)
+
+	fmt.Printf("%v", bodyStr)
+
+	return nil
+}
+
+func Play() error {
+	req, _ := http.NewRequest("PUT", "https://api.spotify.com/v1/me/player/play", nil)
+	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res, err := c.Do(req)
