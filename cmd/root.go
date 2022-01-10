@@ -2,11 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
 )
 
 var cfgFile string
@@ -43,9 +42,8 @@ func initConfig() {
 var rootCmd = &cobra.Command{
 	Use:   "spoty",
 	Short: "Spoty is a spotify fast cli",
-	Long:  `Spoty best spoty cli tools`,
+	Long:  `Spoty best spotify cli tools`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// Do Stuff Here
 	},
 }
 

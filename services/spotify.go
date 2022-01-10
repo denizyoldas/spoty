@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 var c = &http.Client{}
@@ -63,6 +64,8 @@ func Token(code, state string) error {
 	viper.Set("access_token", jsonRes["access_token"])
 	viper.Set("expires_in", jsonRes["expires_in"])
 	viper.Set("refresh_token", jsonRes["refresh_token"])
+	viper.Set("expires_date", time.Now().Local().
+		Add(time.Hour*time.Duration(viper.GetInt("expires_in")/60/60)))
 
 	cobra.CheckErr(viper.WriteConfig())
 	return nil
@@ -91,6 +94,8 @@ func RefreshToken() {
 
 	viper.Set("access_token", jsonRes["access_token"])
 	viper.Set("expires_in", jsonRes["expires_in"])
+	viper.Set("expires_date", time.Now().Local().
+		Add(time.Hour*time.Duration(viper.GetInt("expires_in")/60/60)))
 
 	cobra.CheckErr(viper.WriteConfig())
 }
@@ -137,6 +142,7 @@ func completeAuth(w http.ResponseWriter, r *http.Request) {
 }
 
 func NextSong() error {
+	CheckExpDate()
 	req, _ := http.NewRequest("POST", "https://api.spotify.com/v1/me/player/next", nil)
 	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
@@ -155,6 +161,7 @@ func NextSong() error {
 }
 
 func PrevSong() error {
+	CheckExpDate()
 	req, _ := http.NewRequest("POST", "https://api.spotify.com/v1/me/player/previous", nil)
 	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
@@ -173,6 +180,7 @@ func PrevSong() error {
 }
 
 func Pause() error {
+	CheckExpDate()
 	req, _ := http.NewRequest("PUT", "https://api.spotify.com/v1/me/player/pause", nil)
 	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
@@ -191,6 +199,7 @@ func Pause() error {
 }
 
 func Play() error {
+	CheckExpDate()
 	req, _ := http.NewRequest("PUT", "https://api.spotify.com/v1/me/player/play", nil)
 	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
@@ -206,4 +215,13 @@ func Play() error {
 	fmt.Printf("%v", bodyStr)
 
 	return nil
+}
+
+func CheckExpDate() {
+	now := time.Now()
+	date := viper.GetTime("expires_date")
+	if date.Sub(now) <= 0 {
+		fmt.Println("refresh Token")
+		RefreshToken()
+	}
 }
