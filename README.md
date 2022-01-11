@@ -1,3 +1,27 @@
-# spoty
+# Spoty
 
-Basicly spoty is a spotify cli tool for developer
+`Spoty only cli app for spotify`
+
+Are you use Spotify and are you have a terminal?
+ 
+if your answer is yes. Spoty is a cli app for you.
+Because this cli ets you use spotify in terminal
+
+## How to use
+
+| Command | Args     | Description                |
+| :-------- | :------- | :------------------------- |
+| `help` | | help command |
+
+
+
+## Authors
+
+- [@denizyoldas](https://www.github.com/denizyoldas)
+
+
+## Feedback
+
+If you have any feedback, please reach out to us at daksu30@gmail.com
+
+
