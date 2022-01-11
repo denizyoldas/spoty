@@ -9,9 +9,10 @@ Because this cli ets you use spotify in terminal
 
 ## How to use
 
-| Command | Args     | Description                |
-| :-------- | :------- | :------------------------- |
-| `help` `-h` `--help` | | help command |
+| Command              | Args | Description               |
+|:---------------------|:-----|:--------------------------|
+| `help` `-h` `--help` |      | help command              |
+| `login`              |      | login is spotify auth key |
 
 
 
