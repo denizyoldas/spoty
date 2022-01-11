@@ -11,7 +11,7 @@ Because this cli ets you use spotify in terminal
 
 | Command | Args     | Description                |
 | :-------- | :------- | :------------------------- |
-| `help` | | help command |
+| `help` `-h` `--help` | | help command |
 
 
 
@@ -23,5 +23,4 @@ Because this cli ets you use spotify in terminal
 ## Feedback
 
 If you have any feedback, please reach out to us at daksu30@gmail.com
-
 
