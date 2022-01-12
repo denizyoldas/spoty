@@ -217,6 +217,28 @@ func Play() error {
 	return nil
 }
 
+func Volume(val string) error {
+	CheckExpDate()
+	req, _ := http.NewRequest("PUT", "https://api.spotify.com/v1/me/player/volume", nil)
+	query := req.URL.Query()
+	query.Set("volume_percent", val)
+	req.URL.RawQuery = query.Encode()
+	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	res, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+
+	bodyBytes, _ := io.ReadAll(res.Body)
+	bodyStr := string(bodyBytes)
+
+	fmt.Printf("%v", bodyStr)
+
+	return nil
+}
+
 func CheckExpDate() {
 	now := time.Now()
 	date := viper.GetTime("expires_date")

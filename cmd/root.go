@@ -8,12 +8,27 @@ import (
 	"os"
 )
 
+var spoty = []byte(`
+access_token: tokenexpmle
+client_id: gettheclientid
+device_id: nonerequired
+expires_date: tokenexpDate
+expires_in: 3600
+refresh_token: refreshtoken
+secret: scrtkey
+volume: 100
+`)
 var cfgFile string
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.spoty.yml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config-path", "", "config file (default is $HOME/.spoty.yml)")
 	rootCmd.PersistentFlags().Bool("viper", true, "Use Viper for configuration")
+	rootCmd.PersistentFlags().IntP("volume", "v", 0, "set volume")
+	err := viper.BindPFlag("volume", rootCmd.PersistentFlags().Lookup("volume"))
+	if err != nil {
+		return
+	}
 }
 
 func initConfig() {
@@ -34,8 +49,7 @@ func initConfig() {
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println("Can't read config:", err)
-		os.Exit(1)
+		cobra.CheckErr(createFile())
 	}
 }
 
@@ -52,4 +66,18 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func createFile() error {
+	home, err := homedir.Dir()
+	cobra.CheckErr(err)
+	file, err := os.Create(home + "\\.spoty.yml")
+	if err != nil {
+		return err
+	}
+
+	file.Write(spoty)
+	file.Close()
+
+	return nil
 }
