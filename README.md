@@ -1,7 +1,6 @@
-# Spoty
-
 ![""spotify"](./images/spoty.png)
 
+# Spoty
 `Spoty only cli app for spotify`
 
 Are you use Spotify and are you have a terminal?
