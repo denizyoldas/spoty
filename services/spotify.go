@@ -114,7 +114,7 @@ func Login() error {
 
 	shortUrl := "https://accounts.spotify.com/authorize?" + "response_type=code&client_id=" +
 		viper.GetString("client_id") +
-		"&redirect_uri=http://localhost:3000/callback&scope=user-read-private%20user-modify-playback-state&state=" +
+		"&redirect_uri=http://localhost:3000/callback&scope=user-read-private%20user-modify-playback-state%20user-read-playback-state&state=" +
 		StringCode(16)
 
 	fmt.Println("Please log in to Spotify by visiting the following page in your browser: \n", shortUrl)
@@ -147,16 +147,10 @@ func NextSong() error {
 	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
-	res, err := c.Do(req)
+	_, err := c.Do(req)
 	if err != nil {
 		return err
 	}
-
-	bodyBytes, _ := io.ReadAll(res.Body)
-	bodyStr := string(bodyBytes)
-
-	fmt.Printf("%v", bodyStr)
-
 	return nil
 }
 
@@ -166,16 +160,10 @@ func PrevSong() error {
 	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
-	res, err := c.Do(req)
+	_, err := c.Do(req)
 	if err != nil {
 		return err
 	}
-
-	bodyBytes, _ := io.ReadAll(res.Body)
-	bodyStr := string(bodyBytes)
-
-	fmt.Printf("%v", bodyStr)
-
 	return nil
 }
 
@@ -185,16 +173,10 @@ func Pause() error {
 	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
-	res, err := c.Do(req)
+	_, err := c.Do(req)
 	if err != nil {
 		return err
 	}
-
-	bodyBytes, _ := io.ReadAll(res.Body)
-	bodyStr := string(bodyBytes)
-
-	fmt.Printf("%v", bodyStr)
-
 	return nil
 }
 
@@ -204,16 +186,10 @@ func Play() error {
 	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
-	res, err := c.Do(req)
+	_, err := c.Do(req)
 	if err != nil {
 		return err
 	}
-
-	bodyBytes, _ := io.ReadAll(res.Body)
-	bodyStr := string(bodyBytes)
-
-	fmt.Printf("%v", bodyStr)
-
 	return nil
 }
 
@@ -226,16 +202,25 @@ func Volume(val string) error {
 	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
-	res, err := c.Do(req)
+	_, err := c.Do(req)
 	if err != nil {
 		return err
 	}
+	return nil
+}
 
-	bodyBytes, _ := io.ReadAll(res.Body)
-	bodyStr := string(bodyBytes)
-
-	fmt.Printf("%v", bodyStr)
-
+func GetAvailableDevices() error {
+	CheckExpDate()
+	req, _ := http.NewRequest("GET", API+"me/player/devices", nil)
+	query := req.URL.Query()
+	req.URL.RawQuery = query.Encode()
+	req.Header.Set("Authorization", "Bearer "+viper.GetString("access_token"))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	_, err := c.Do(req)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

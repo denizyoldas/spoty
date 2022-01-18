@@ -6,14 +6,14 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(refreshCmd)
+	rootCmd.AddCommand(devicesCmd)
 }
 
-var refreshCmd = &cobra.Command{
-	Use:   "refresh",
-	Short: "get new token",
+var devicesCmd = &cobra.Command{
+	Use:   "devices",
+	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		services.RefreshToken()
+		cobra.CheckErr(services.GetAvailableDevices())
 	},
 }

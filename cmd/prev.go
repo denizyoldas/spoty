@@ -19,5 +19,5 @@ var prev = &cobra.Command{
 
 func run(cmd *cobra.Command, args []string) {
 	cobra.CheckErr(services.PrevSong())
-	fmt.Println("previus song!")
+	fmt.Println(services.NEXT_SONG)
 }

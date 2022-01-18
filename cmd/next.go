@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/denizyoldas/spoty/services"
 	"github.com/spf13/cobra"
 )
@@ -15,5 +16,6 @@ var nextCmd = &cobra.Command{
 	Long:  `This command will be executed next to each song`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cobra.CheckErr(services.NextSong())
+		fmt.Println(services.NEXT_SONG)
 	},
 }
