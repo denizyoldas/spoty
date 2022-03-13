@@ -16,6 +16,6 @@ var playCmd = &cobra.Command{
 	Long:  `This command will be start a song`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cobra.CheckErr(services.Play())
-		fmt.Println("song start!")
+		fmt.Println(services.START_SONG)
 	},
 }

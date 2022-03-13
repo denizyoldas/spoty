@@ -16,6 +16,6 @@ var pauseCmd = &cobra.Command{
 	Long:  `This command will be pause a song`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cobra.CheckErr(services.Pause())
-		fmt.Println("song paused!")
+		fmt.Println(services.PAUSE)
 	},
 }

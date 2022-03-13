@@ -90,8 +90,6 @@ func RefreshToken() {
 	var jsonRes Payload
 	cobra.CheckErr(json.Unmarshal(bodyBytes, &jsonRes))
 
-	fmt.Printf("%v", jsonRes)
-
 	viper.Set("access_token", jsonRes["access_token"])
 	viper.Set("expires_in", jsonRes["expires_in"])
 	viper.Set("expires_date", time.Now().Local().
@@ -228,7 +226,6 @@ func CheckExpDate() {
 	now := time.Now()
 	date := viper.GetTime("expires_date")
 	if date.Sub(now) <= 0 {
-		fmt.Println("refresh Token")
 		RefreshToken()
 	}
 }
